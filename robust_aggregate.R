@@ -1,6 +1,6 @@
 robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_grp, fill_grp){
-  #typeag = the typeag of aggregation we want to do 
-  #bygroup = T or F, either we are aggregating by multipel groups or just 1
+  #typeag = the type of aggregation we want to do 
+  #bygroup = T or F, either we are aggregating by multiple groups or just 1
   #change_names = T or F for whether or not we want to change the column names to be more descriptive
   #d = data frame
   #ag_col = column that is to be aggregated
