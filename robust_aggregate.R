@@ -56,8 +56,8 @@ robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_g
     } else{
       colnames(ag)[colnames(ag) == "x"] <- paste0(typeag,"_",ag_col)
     }
-    ag
   }
+  ag
 }
 
 #example 
