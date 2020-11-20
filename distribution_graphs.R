@@ -19,7 +19,7 @@ graph_distribution_fill <- function(d, dist_var, fl, cutoff, cutoff_val){
     return(statement)
   }
   if(!is.na(cutoff) & !is.numeric(cutoff_val)){
-    statement <- print("The cutoff_val must be numeric")
+    statement <- print("The cutoff_val must be numeric or NA")
     return(statement)
   }
   
