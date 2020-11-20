@@ -4,7 +4,7 @@ load_packages <- function(){
                         "data.table", "tidyr", "FactoMineR", "corrplot", "Hmisc", "corrplot", "rfUtilities", "colortools", 
                         "stringr", "tm", "stringi", "dbplyr", "DBI", "tidytext", "keras", "gtools", "intervals", "ngram",
                         "topicmodels", "wordcloud2", "wordcloud", "gbm", "xgboost", "pROC", "plotROC", "ROCR", 
-                        "mvmeta", "ggrepel"
+                        "mvmeta", "ggrepel", "tidyverse", "rgdal", "rgeos", "maptools", "ggalt", "ggthemes"
   )
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
@@ -55,6 +55,12 @@ load_packages <- function(){
   library(ROCR)
   library(mvmeta)
   library(ggrepel)
+  library(tidyverse) 
+  library(rgdal) 
+  library(rgeos) 
+  library(maptools) 
+  library(ggalt) 
+  library(ggthemes) 
   
 }
 
