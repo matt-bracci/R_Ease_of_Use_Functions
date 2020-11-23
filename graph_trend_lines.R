@@ -16,13 +16,13 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
   #aggregate data - calls from robust aggregate function
   if(is.na(grp)){ #if we are not taking by group, simply need the overall avg
     ag <- robust_aggregate(type_ag, F, F, d, agvar, tp) 
-    ag$Group.2 <- "Overall"
+    ag$Group.2 <- "Overall" #we add this for later when we make the labels and text groups for graph
   } else{ #else if we are going by group
     ag <- robust_aggregate(type_ag, T, F, d, agvar, tp, grp) #take avgs by group
     if(!"all" %in% grps_to_use){ #if 'all' is not in our grps_to_use
       if(!"Overall" %in% grps_to_use){ #if Overall is also not in our groups to use
         aglist <- list()
-        for(i in levels(unique(as.factor(grps_to_use)))){
+        for(i in levels(unique(as.factor(grps_to_use)))){ #take each group in groups to use
           agi <- ag[ag$Group.2 == i, ]
           aglist[[i]] <- agi
         }
@@ -36,7 +36,7 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
           agi <- ag[ag$Group.2 == i, ]
           aglist[[i]] <- agi
         }
-        ag <- rbindlist(aglist)
+        ag <- rbindlist(aglist) #get avgs for grops we want
         ag2 <- robust_aggregate(type_ag, F, F, d, agvar, tp) #take overall avgs 
         ag2$Group.2 = "Overall"
         ag <- rbind(ag2, ag) #combine overall avgs with reduced group avgs 
@@ -47,13 +47,18 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
   #create labels and geom_text areas for graphs
   lbl_list <- list()
   geom_text_list <- list()
+  minval <- as.numeric(min(ag$x))
   for(j in levels(droplevels(unique(as.factor(ag$Group.2))))){
     d <- ag[ag$Group.2 == j, ]
     lbl <- j
     lbl_list[[j]] <- lbl
-    gt <- geom_text(data = d, aes(label = round(x, 0)), vjust = -1, size = sz_lbl, fontface = 'bold')
+    if(minval %in% d$x & !is.na(grp)){
+      gt <- geom_text(data = d, aes(label = round(x, 0)), vjust = 2, size = sz_lbl, fontface = 'bold')
+    } else{
+      gt <- geom_text(data = d, aes(label = round(x, 0)), vjust = -1, size = sz_lbl, fontface = 'bold')
+    }
     geom_text_list[[j]] <- gt
-  } #need to fix this such that the labels are either above or below as appropriate 
+  } #need to fix this such that the labels are either above or below as appropriate - right now only works for 2 lines really
   
   #create title 
   ttl <- ifelse(is.na(grp), paste(agvar, "by", tp), paste(agvar, "by", tp, "by", grp))
@@ -75,7 +80,8 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
 
 #examples
 data("airquality")
-graph_trend_line(airquality, "avg", "Temp", "Month", NA, NA, 1, 2, 3)
+graph_trend_line(airquality, "avg", "Temp", "Month", NA, NA, 1, 2, 3) #just the avg temp per month
 airquality$Heavy_Wind <- ifelse(airquality$Wind > 10, "Strong Wind", "Weak Wind")
-graph_trend_line(airquality, "avg", "Temp", "Month", "Heavy_Wind", "all", 1, 2, 3)
-graph_trend_line(airquality, "avg", "Temp", "Month", "Heavy_Wind", c("Overall", "Strong Wind"), 1, 2, 3)
+graph_trend_line(airquality, "avg", "Temp", "Month", "Heavy_Wind", "all", 1, 2, 3) #avg temp per month (strong wind and weak wind)
+graph_trend_line(airquality, "avg", "Temp", "Month", "Heavy_Wind", c("Overall", "Strong Wind"), 1, 2, 3) #avg temp per month (overall and strong wind only)
+graph_trend_line(airquality, "avg", "Temp", "Month", "Heavy_Wind", c("Overall", "Strong Wind", "Weak Wind"), 1, 2, 3) #avg temp per month (overall and all subgroups)
