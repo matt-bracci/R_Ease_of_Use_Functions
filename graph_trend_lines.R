@@ -70,7 +70,7 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
     scale_color_brewer(palette = "Dark2") +
     geom_point(size = sz_point) +
     geom_text_list +
-    labs(title = ttl, y = agvar, x = "", fill = "") +
+    labs(title = ttl, y = agvar, x = "", color = "") +
     ylim(min(ag$x) - 10, max(ag$x) + 10) +
     #scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
     guides(size = guide_legend(override.aes = list(shape = 1))) +
