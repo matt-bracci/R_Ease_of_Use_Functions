@@ -36,7 +36,7 @@ graph_trend_line <- function(d, type_ag, agvar, tp, grp, grps_to_use, sz_line, s
           agi <- ag[ag$Group.2 == i, ]
           aglist[[i]] <- agi
         }
-        ag <- rbindlist(aglist) #get avgs for grops we want
+        ag <- rbindlist(aglist) #get avgs for groups we want
         ag2 <- robust_aggregate(type_ag, F, F, d, agvar, tp) #take overall avgs 
         ag2$Group.2 = "Overall"
         ag <- rbind(ag2, ag) #combine overall avgs with reduced group avgs 
