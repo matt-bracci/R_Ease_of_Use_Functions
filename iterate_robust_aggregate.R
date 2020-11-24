@@ -1,5 +1,5 @@
 #function to iterate through robust aggregate to get multiple ags in 1 df 
-#need to edit the column names/output and need to ensure values appear in order they are written
+#need to ensure values appear in order they are written
 iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fill_grp){
   
   #pretty much the same arguments as the robust aggregate
@@ -81,8 +81,6 @@ iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fi
       }
       ag <- rbindlist(aglist2) #required dplyr 
     }
-    
-    #ag[ ,c(1,3,2,4:ncol(ag))] #need to re-order columns this isn't working
   }
   
   #if we want same ag_col for same primary group for different fill grp
@@ -113,7 +111,12 @@ iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fi
       }
       ag <- rbindlist(aglist)
     }
-    #ag[ ,c(1,3,2,4:ncol(ag))] #need to re-order columns this isn't working
+  }
+  if("Group.2" %in% names(ag) & "Group.2_Type" %in% names(ag)){
+    ag <- as.data.frame(ag)
+    ag2 <- ag[ ,c("Group.2_Type", "Group.2")]
+    ag3 <- ag[ ,!names(ag) %in% names(ag2)]
+    ag <- cbind(ag2, ag3)
   }
   ag
 }
@@ -160,5 +163,7 @@ ag1 <- iterate_robust_aggregate("avg", T, mtcars, "mpg", "cyl", c("vs", "gear"))
 ag2 <- iterate_robust_aggregate("avg", T, mtcars, "mpg", c("vs", "gear"), "cyl") #dif prim sing fill
 #ag2 = ag1
 ag <- iterate_robust_aggregate("avg", F, mtcars, "mpg", c("cyl","vs"), NA) #without fill
+
+
 
 
