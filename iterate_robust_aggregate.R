@@ -6,6 +6,7 @@ iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fi
   #change column names is predifned in function
   #can add a vector c("col_name1", "col_name2) for any ag_col, primary_grp, or fill_grp
     #funciton will iterate over each group 
+  #fill_grp must be present but can be NA if don't want to use
   
   aglist <- list()
   aglist2 <- list()
@@ -45,25 +46,25 @@ iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fi
   if(length(ag_col) > 1 & 
      ((length(primary_grp) == 1 & length(fill_grp) > 1) | (length(primary_grp) > 1 & length(fill_grp) == 1))){
     if(length(primary_grp) == 1){ #if the fill group has multiple values 
-      for(j in levels(unique(as.factor(fill_grp)))){
-        for(i in levels(unique(as.factor(ag_col)))){
+      for(j in levels(unique(as.factor(fill_grp)))){ #for each fill group
+        for(i in levels(unique(as.factor(ag_col)))){ #for each ag val
           ag <- robust_aggregate(typeag = typeag, bygroup = bygroup, change_names = T, 
-                                 d = d, ag_col = i, primary_grp = primary_grp, fill_grp = j)
-          ag$Group.2_Type <- j
+                                 d = d, ag_col = i, primary_grp = primary_grp, fill_grp = j) #take ags
+          ag$Group.2_Type <- j #define the type that will appear in the fill group
           aglist[[i]] <- ag
         }
         if(bygroup != T){
           statement <- "If bygroup is False, cannot take changing fill group, because fill group DNE"
           return(statement)
         } else{
-          ag <- Reduce(function(x,y) merge(x,y, by = c(j, primary_grp, "Group.2_Type")), aglist)
+          ag <- Reduce(function(x,y) merge(x,y, by = c(j, primary_grp, "Group.2_Type")), aglist) #merge 
         }
-        colnames(ag)[colnames(ag) == j] <- "Group.2"
-        aglist2[[j]] <- ag
+        colnames(ag)[colnames(ag) == j] <- "Group.2" #rename column so can combine with rbindlist
+        aglist2[[j]] <- ag #append to J list
       }
       ag <- rbindlist(aglist2) #required dplyr 
     } else{ #if the primary grp has multiple values 
-      for(j in levels(unique(as.factor(primary_grp)))){
+      for(j in levels(unique(as.factor(primary_grp)))){ 
         for(i in levels(unique(as.factor(ag_col)))){
           ag <- robust_aggregate(typeag = typeag, bygroup = bygroup, change_names = T, 
                                  d = d, ag_col = i, primary_grp = j, fill_grp = fill_grp)
@@ -112,7 +113,6 @@ iterate_robust_aggregate <- function(typeag, bygroup, d, ag_col, primary_grp, fi
       }
       ag <- rbindlist(aglist)
     }
-  
     #ag[ ,c(1,3,2,4:ncol(ag))] #need to re-order columns this isn't working
   }
   ag
