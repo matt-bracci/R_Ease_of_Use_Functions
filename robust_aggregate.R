@@ -1,6 +1,6 @@
 robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_grp, fill_grp){
-  #typeag = the type of aggregation we want to do 
-  #bygroup = T or F, either we are aggregating by multiple groups or just 1
+  #typeag = the typeag of aggregation we want to do 
+  #bygroup = T or F, either we are aggregating by multipel groups or just 1
   #change_names = T or F for whether or not we want to change the column names to be more descriptive
   #d = data frame
   #ag_col = column that is to be aggregated
@@ -33,6 +33,7 @@ robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_g
         ag <- merge(fullag, ag, by = "Group.1")
         ag$Percent <- ag$x/ag$tot #counts w/percent 
       } else{
+        d <- d[!is.na(d[[ag_col]]), ]
         ag <- aggregate(d[[ag_col]], list(d[[primary_grp]], d[[fill_grp]]), length) #there are instances where counts without percents can make merging further data sets easier
       }
     } else{ #if we are not doing by additional group (fill_grp)
@@ -41,6 +42,7 @@ robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_g
       } else if(typeag == "sum"){
         ag <- aggregate(d[[ag_col]], list(d[[primary_grp]]), sum, na.rm = T) #sum
       } else{
+        d <- d[!is.na(d[[ag_col]]), ]
         ag <- aggregate(d[[ag_col]], list(d[[primary_grp]]), length)
         ag$Percent <- ag$x/nrow(d) #unlike when doing it by group, for the most part percents here are just useful and not cumbersome 
       }
@@ -59,6 +61,7 @@ robust_aggregate <- function(typeag, bygroup, change_names, d, ag_col, primary_g
   }
   ag
 }
+
 
 #example 
 data("mtcars")
